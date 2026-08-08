@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 
 // Layouts
@@ -21,6 +21,17 @@ import { Login } from './pages/dashboard/Login';
 import { Patients } from './pages/dashboard/Patients';
 import { PatientRequests } from './pages/dashboard/PatientRequests';
 import { Settings } from './pages/dashboard/Settings';
+
+// Scroll To Top on Route Change Component
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // Loading Fallback Component
 const PageLoader = () => (
@@ -47,6 +58,7 @@ export const App: React.FC = () => {
   return (
     <AppProvider>
       <HashRouter>
+        <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Website Patient Routes */}

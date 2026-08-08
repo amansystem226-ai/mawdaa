@@ -9,23 +9,50 @@ import {
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { sendWhatsApp } from '../../utils/whatsapp';
+import { useApp } from '../../context/AppContext';
 
-// --- Synchronized Staggered Entrance Animations ---
+// --- Smooth Calm Typewriter Component ---
+const TypewriterTitle: React.FC = () => {
+  const [line1, setLine1] = useState('');
+  const text1 = 'مركز مودة لجراحات العيون';
+
+  useEffect(() => {
+    let i1 = 0;
+    const timer1 = setInterval(() => {
+      if (i1 < text1.length) {
+        i1++;
+        setLine1(text1.substring(0, i1));
+      } else {
+        clearInterval(timer1);
+      }
+    }, 60);
+
+    return () => { clearInterval(timer1); };
+  }, []);
+
+  return (
+    <div className="block text-white font-extrabold text-2xl sm:text-4xl md:text-5xl lg:text-[50px] leading-snug tracking-tight [text-shadow:_0_3px_12px_rgba(0,0,0,0.9)]">
+      {line1}
+    </div>
+  );
+};
+
+// --- Synchronized Entrance Animations ---
 const heroDescVariant: any = {
-  hidden: { opacity: 0, y: 25 },
+  hidden: { opacity: 0, y: 15 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay: 2.8, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.6, delay: 2.6, ease: 'easeOut' }
   }
 };
 
 const heroButtonsVariant: any = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay: 3.3, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.6, delay: 3.0, ease: 'easeOut' }
   }
 };
 
@@ -48,48 +75,6 @@ const cardChildVariant: any = {
     scale: 1,
     transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] }
   }
-};
-
-// --- Ultra-Smooth Bug-Free Typewriter Component ---
-const TypewriterTitle: React.FC<{ text: string; speed?: number; delay?: number }> = ({
-  text,
-  speed = 75,
-  delay = 300
-}) => {
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDone, setIsDone] = useState(false);
-
-  useEffect(() => {
-    let timer: any;
-    const startTimer = setTimeout(() => {
-      timer = setInterval(() => {
-        setCharIndex((prev) => {
-          if (prev >= text.length) {
-            clearInterval(timer);
-            setIsDone(true);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, speed);
-    }, delay);
-
-    return () => {
-      clearTimeout(startTimer);
-      if (timer) clearInterval(timer);
-    };
-  }, [text, speed, delay]);
-
-  const currentText = text.substring(0, charIndex);
-
-  return (
-    <span className="inline-flex items-center flex-wrap">
-      <span>{currentText}</span>
-      {!isDone && (
-        <span className="inline-block w-[4px] h-[0.85em] bg-primary-light mr-2 align-middle animate-pulse rounded-full shadow-[0_0_10px_#18b6c4]" />
-      )}
-    </span>
-  );
 };
 
 // --- Counter Component ---
@@ -135,7 +120,7 @@ const services = [
     icon: Zap,
     title: 'عمليات العيون',
     desc: 'جناح عمليات بأحدث الأجهزة وأنظمة التعقيم لإجراء مختلف عمليات العيون بأعلى معايير الجودة.',
-    items: ['إزالة المياه البيضاء بالفيكو', 'زراعة العدسات', 'عمليات المياه الزرقاء', 'عمليات الشبكية'],
+    items: ['إزالة المياه البيضاء بالفاكو', 'زراعة العدسات', 'عمليات المياه الزرقاء', 'عمليات الشبكية'],
     link: '/surgeries',
     color: 'from-secondary to-secondary-dark',
     bg: 'bg-secondary/5',
@@ -149,6 +134,7 @@ const services = [
     link: '/clinics',
     color: 'from-primary-light to-primary',
     bg: 'bg-accent',
+    video: './assets/clinics_video.mp4',
     image: './assets/eye-clinics.jpg',
   },
 ];
@@ -175,15 +161,32 @@ type FormData = { name: string; phone: string; service: string; note: string };
 
 // --- CLEAN HUMAN MEDICAL BOOKING FORM (32px Padding, 56px Inputs & Buttons, 16px Radius) ---
 const BookingForm: React.FC = () => {
+  const { addAppointment } = useApp();
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>();
+  const [submitted, setSubmitted] = useState(false);
 
   const onSubmit = (data: FormData) => {
+    const defaultService = 'طلب كشف عيون عام';
+    addAppointment({
+      patientName: data.name,
+      phone: data.phone,
+      age: 30,
+      department: 'clinics',
+      service: defaultService,
+      preferredDate: new Date().toISOString().split('T')[0],
+      preferredTime: '10:00 AM - 12:00 PM',
+      notes: data.note || ''
+    });
+
+    // 2. Send WhatsApp
     sendWhatsApp({
       name: data.name,
       phone: data.phone,
-      service: data.service,
+      service: defaultService,
       notes: data.note,
     });
+
+    setSubmitted(true);
     reset();
   };
 
@@ -193,9 +196,22 @@ const BookingForm: React.FC = () => {
       <div className="bg-[#0b2230] p-8 sm:p-10 text-white border-b border-white/10">
         <div className="text-right">
           <h3 className="text-2xl sm:text-[30px] font-bold text-white font-heading mb-2">حجز كشف طبي</h3>
-          <p className="text-white/75 text-base leading-[1.8] font-light">سجّل بياناتك وسيتواصل معك الفريق الطبي لتأكيد الموعد</p>
+          <p className="text-white/75 text-base leading-[1.8] font-light">سجل بياناتك وسيتواصل معك فريق التنسيق الطبي لتأكيد الموعد</p>
         </div>
       </div>
+
+      {/* Success Notification Alert */}
+      {submitted && (
+        <div className="bg-emerald-50 border border-emerald-300 p-6 m-6 rounded-2xl flex items-center gap-4 text-emerald-800 animate-in fade-in">
+          <CheckCircle2 size={28} className="text-emerald-600 shrink-0" />
+          <div>
+            <h4 className="font-bold text-base mb-1 font-heading">تم حفظ وتسجيل طلب الحجز في الداشبورد بنجاح!</h4>
+            <p className="text-sm opacity-90 leading-relaxed">
+              تم إرسال بياناتك إلى لوحة تحكم مركز مودة لجراحات العيون بمدينة أشمون - محافظة المنوفية، وجاري التواصل معك الآن عبر الواتساب لتأكيد الموعد.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Form Fields Section (32px Padding) */}
       <form onSubmit={handleSubmit(onSubmit)} className="p-8 sm:p-10 bg-white space-y-6">
@@ -225,26 +241,6 @@ const BookingForm: React.FC = () => {
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label className="block text-sm font-bold text-navy mb-2 flex items-center gap-2">
-              <Stethoscope size={18} className="text-primary" />
-              <span>الخدمة المطلوبة *</span>
-            </label>
-            <select
-              {...register('service', { required: true })}
-              className={`w-full bg-slate-50/80 text-navy border ${errors.service ? 'border-red-500' : 'border-slate-300'} h-[56px] px-5 rounded-[16px] text-base outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/15 transition-all font-medium cursor-pointer`}
-            >
-              <option value="" className="text-slate-500">اختر نوع الخدمة الطبية المطلوبة</option>
-              <option value="فحوصات وأشعة" className="text-navy">فحوصات وأشعة (Pentacam / OCT)</option>
-              <option value="عملية المياه البيضاء" className="text-navy">عملية المياه البيضاء (الفيكو)</option>
-              <option value="زراعة عدسات" className="text-navy">زراعة عدسات تصحيح الإبصار</option>
-              <option value="عملية المياه الزرقاء" className="text-navy">عملية المياه الزرقاء (الجلوكوما)</option>
-              <option value="عملية الحول" className="text-navy">عملية تصحيح الحول</option>
-              <option value="كشف نظر" className="text-navy">كشف نظر ونظارات طبية</option>
-              <option value="عدسات لاصقة" className="text-navy">فحوصات وتركيب عدسات لاصقة</option>
-              <option value="استشارة عامة" className="text-navy">استشارة طبيب عيون</option>
-            </select>
-          </div>
         </div>
 
         <div>
@@ -277,6 +273,60 @@ const BookingForm: React.FC = () => {
 // --- Home Page Component ---
 export const Home: React.FC = () => {
   const navigate = useNavigate();
+  const [isMuted, setIsMuted] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const enableAudio = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      setIsMuted(false);
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  // Attempt autoplay with sound on mount & attach global click listener
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      setIsMuted(false);
+      videoRef.current.play().then(() => {
+        setIsMuted(false);
+      }).catch(() => {
+        // Fallback to muted if browser blocks unmuted autoplay
+        if (videoRef.current) {
+          videoRef.current.muted = true;
+          setIsMuted(true);
+          videoRef.current.play();
+        }
+      });
+    }
+
+    const handleGlobalInteraction = () => {
+      enableAudio();
+    };
+
+    window.addEventListener('click', handleGlobalInteraction, { once: true });
+    window.addEventListener('touchstart', handleGlobalInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleGlobalInteraction);
+      window.removeEventListener('touchstart', handleGlobalInteraction);
+    };
+  }, []);
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const scrollToBooking = () => {
     const el = document.getElementById('booking');
@@ -299,92 +349,141 @@ export const Home: React.FC = () => {
   return (
     <div className="flex flex-col">
 
-      {/* --- HERO SECTION: 90vh Height, 32px Vertical Spacing, 72px H1 Scale --- */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-navy pb-24 sm:pb-32 pt-[140px] md:pt-[160px]">
-        {/* Video Background */}
+      {/* --- HERO SECTION: 50/50 SPLIT LAYOUT --- */}
+      <section 
+        onClick={enableAudio}
+        className="relative min-h-[90vh] flex flex-col justify-center items-center overflow-hidden bg-navy pt-[120px] sm:pt-[150px] pb-16 sm:pb-24"
+      >
+        {/* Ambient Live Video Background for Entire Hero Section */}
         <video
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover scale-105"
-          poster="./assets/interior.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-35 sm:opacity-45 blur-[1px] transition-opacity duration-500"
         >
-          <source src="./assets/hero-video.mp4" type="video/mp4" />
+          <source src="./assets/IMG_9867.mp4" type="video/mp4" />
         </video>
 
-        {/* Dark Overlay for Text Contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b2230] via-[#0b2230]/80 to-[#0b2230]/45" />
+        {/* Ambient Gradient Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b2230]/85 via-[#0b2230]/75 to-[#0b2230]/90 pointer-events-none" />
 
-        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-10 pb-12 w-full">
-          <div className="max-w-3xl text-right space-y-8">
+        <div className="relative z-10 w-full max-w-[1280px] mx-auto px-5 sm:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* RIGHT COLUMN (6 cols): Title, Intro, CTA Buttons */}
+            <motion.div 
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="lg:col-span-6 text-right space-y-6 bg-[#0b2230]/90 backdrop-blur-md p-6 sm:p-8 rounded-[28px] border border-white/20 shadow-2xl"
+            >
+              <h1 className="font-heading">
+                <TypewriterTitle />
+              </h1>
 
-            {/* Main Title - 72px H1 Scale */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[72px] font-black text-white leading-tight font-heading mb-8">
-              <div className="block">
-                <TypewriterTitle text="مركز مودة لجراحات العيون" speed={75} delay={300} />
+              {/* Location Subtitle Glass Pill */}
+              <div className="mt-[18px] mb-[24px]">
+                <div className="w-fit whitespace-nowrap rounded-[999px] px-[22px] py-[10px] bg-[rgba(30,200,232,0.08)] border border-[rgba(30,200,232,0.18)] backdrop-blur-[10px] inline-flex items-center justify-center">
+                  <span className="font-heading font-bold text-[16px] sm:text-[18px] lg:text-[22px] leading-[1.2] tracking-[-0.3px] whitespace-nowrap bg-gradient-to-l from-[#1EC8E8] via-[#67e8f9] to-[#1EC8E8] bg-clip-text text-transparent [text-shadow:_0_0_12px_rgba(30,200,232,0.3)]">
+                    بمدينة أشمون • محافظة المنوفية
+                  </span>
+                </div>
               </div>
+
+              <motion.p
+                variants={heroDescVariant}
+                initial="hidden"
+                animate="visible"
+                className="text-base sm:text-lg text-white/95 leading-[1.8] mb-6 font-medium"
+              >
+                أول مركز متخصص لطب وجراحة العيون بمدينة أشمون - محافظة المنوفية، يقدم خدمات التشخيص الدقيق، والفحوصات، والعمليات الجراحية، والعيادات التخصصية بأحدث الأجهزة الطبية.
+              </motion.p>
+
               <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.4, duration: 0.6 }}
-                className="block text-2xl sm:text-3xl md:text-[48px] text-primary-light font-bold mt-4 tracking-wide opacity-95"
+                variants={heroButtonsVariant}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col sm:flex-row gap-4 pt-2"
               >
-                بأشمون
+                <motion.button
+                  onClick={scrollToBooking}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group inline-flex items-center justify-center gap-3 bg-[#0A7C86] hover:bg-[#075c64] text-white font-bold text-base h-[54px] px-8 rounded-[16px] shadow-md transition-all duration-300 cursor-pointer"
+                >
+                  <span>احجز موعدك الآن</span>
+                  <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
+                </motion.button>
+
+                <motion.button
+                  onClick={scrollToServices}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group inline-flex items-center justify-center gap-3 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-base h-[54px] px-8 rounded-[16px] border border-white/30 shadow-sm transition-all duration-300 cursor-pointer"
+                >
+                  <span>تعرف على خدماتنا</span>
+                  <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform duration-300" />
+                </motion.button>
               </motion.div>
-            </h1>
-
-            {/* Subtitle - 18px Paragraph, 1.8 Line Height */}
-            <motion.p
-              variants={heroDescVariant}
-              initial="hidden"
-              animate="visible"
-              className="text-lg text-white/90 leading-[1.8] mb-8 max-w-2xl font-light"
-            >
-              أول مركز متخصص لطب وجراحة العيون بمدينة أشمون، يقدم خدمات التشخيص الدقيق، والفحوصات، والعمليات، والعيادات بأحدث الأجهزة الطبية وعلى يد نخبة من استشاريي طب وجراحة العيون بإشراف د. محمد عمار.
-            </motion.p>
-
-            {/* Action Buttons - 56px Height, 32px Horizontal Padding, 16px Radius, 20px Gap */}
-            <motion.div
-              variants={heroButtonsVariant}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-col sm:flex-row gap-[20px] pt-2"
-            >
-              <motion.button
-                onClick={scrollToBooking}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center justify-center gap-3 bg-[#0A7C86] hover:bg-[#075c64] text-white font-bold text-base h-[56px] px-8 rounded-[16px] shadow-md transition-all duration-300 cursor-pointer font-heading"
-              >
-                <span>احجز موعدك الآن</span>
-                <ChevronLeft size={20} className="group-hover:-translate-x-2 transition-transform duration-300" />
-              </motion.button>
-
-              <motion.button
-                onClick={scrollToServices}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center justify-center gap-3 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold text-base h-[56px] px-8 rounded-[16px] border border-white/30 shadow-sm transition-all duration-300 cursor-pointer font-heading"
-              >
-                <span>تعرف على خدماتنا</span>
-                <ChevronLeft size={18} className="group-hover:-translate-x-2 transition-transform duration-300" />
-              </motion.button>
             </motion.div>
+
+            {/* LEFT COLUMN (6 cols): Dedicated Unobstructed Video Player Card */}
+            <motion.div 
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="lg:col-span-6 relative w-full"
+            >
+              <div className="relative w-full max-w-[420px] lg:max-w-none mx-auto rounded-[28px] overflow-hidden border border-white/25 shadow-2xl bg-black/80 group">
+                {/* 1080p Video Player */}
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted={isMuted}
+                  playsInline
+                  className="w-full h-[450px] sm:h-[520px] lg:h-[560px] object-cover object-center rounded-[28px]"
+                >
+                  <source src="./assets/IMG_9867.mp4" type="video/mp4" />
+                </video>
+
+                {/* Floating Sound Toggle Badge */}
+                <button
+                  onClick={toggleMute}
+                  className="absolute top-4 left-4 z-20 flex items-center gap-2.5 bg-black/60 hover:bg-black/80 text-white px-4 py-2 rounded-full border border-white/30 backdrop-blur-md transition-all duration-300 shadow-lg cursor-pointer"
+                >
+                  <span className="text-lg">{isMuted ? '🔇' : '🔊'}</span>
+                  <span className="text-xs font-bold font-heading">{isMuted ? 'انقر لتشغيل الصوت' : 'الصوت يعمل'}</span>
+                </button>
+
+                {/* Video Info Label */}
+                <div className="absolute bottom-4 inset-x-4 z-20 bg-[#0b2230]/85 backdrop-blur-md p-3.5 rounded-[18px] border border-white/20 flex items-center justify-between text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="text-xs font-bold font-heading">جولة مباشرة في مركز مودة</span>
+                  </div>
+                  <span className="text-xs text-white/70 font-semibold">1080p HD</span>
+                </div>
+              </div>
+            </motion.div>
+
           </div>
 
-          {/* Stats Bar Cards - 3 Columns, 32px Gaps */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
+          {/* Stats Bar Cards */}
+          <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             {[
               { n: 15, suf: '+', label: 'سنة خبرة' },
               { n: 10000, suf: '+', label: 'عملية ناجحة' },
-              { n: 98, suf: '%', label: 'رضا المرضى' },
+              { n: 98, suf: '%', label: 'نسبة رضا المرضى' },
             ].map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 3.8 + i * 0.2, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
                 className="bg-white/10 backdrop-blur-md rounded-[20px] p-6 border border-white/15 text-center hover:bg-white/15 transition-cinematic hover:-translate-y-1"
               >
-                <p className="text-3xl sm:text-4xl font-extrabold text-white font-heading">
+                <p className="text-3xl sm:text-4xl font-bold text-white">
                   <Counter target={s.n} suffix={s.suf} />
                 </p>
                 <p className="text-white/85 text-sm sm:text-base mt-2 font-medium">{s.label}</p>
@@ -405,6 +504,44 @@ export const Home: React.FC = () => {
               fill="currentColor"
             />
           </svg>
+        </div>
+      </section>
+
+      {/* --- QUICK NAV SECTION --- */}
+      <section className="py-10 bg-white border-b border-border relative z-20">
+        <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+            {[
+              { icon: Stethoscope, label: 'العيادات', path: '/clinics' },
+              { icon: Microscope, label: 'الفحوصات', path: '/examinations' },
+              { icon: Activity, label: 'العمليات', path: '/surgeries' },
+              { icon: Users, label: 'الفريق الطبي', path: '/doctors' },
+              { icon: MessageCircle, label: 'تواصل معنا', id: 'booking' },
+              { icon: Phone, label: 'اتصل بنا', tel: '01000141542' },
+              { icon: FileText, label: 'احجز الآن', id: 'booking', highlight: true },
+            ].map((item, i) => (
+              <motion.button
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+                onClick={() => {
+                  if ((item as any).tel) { window.location.href = `tel:${(item as any).tel}`; }
+                  else if ((item as any).id) { scrollToSection((item as any).id); }
+                  else if (item.path) { navigate(item.path); }
+                }}
+                className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer group ${
+                  (item as any).highlight
+                    ? 'bg-[#0A7C86] text-white border-[#0A7C86] hover:bg-[#075c64]'
+                    : 'bg-accent text-navy border-border hover:border-primary hover:bg-primary-50'
+                }`}
+              >
+                <item.icon size={22} className={(item as any).highlight ? 'text-white' : 'text-primary'} />
+                <span className={`text-xs font-bold leading-tight text-center ${(item as any).highlight ? 'text-white' : 'text-navy'}`}>{item.label}</span>
+              </motion.button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -459,7 +596,7 @@ export const Home: React.FC = () => {
               <div className="relative rounded-[24px] overflow-hidden shadow-hero border border-border">
                 <video
                   autoPlay loop muted playsInline
-                  className="w-full h-[480px] object-cover"
+                  className="w-full h-[240px] sm:h-[360px] md:h-[460px] object-cover rounded-[24px]"
                   poster="./assets/logo.jpg"
                 >
                   <source src="./assets/logo-video.mp4" type="video/mp4" />
@@ -512,8 +649,19 @@ export const Home: React.FC = () => {
               >
                 <div>
                   <div className="relative h-56 overflow-hidden">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out" loading="lazy" />
-                    <div className={`absolute inset-0 bg-gradient-to-t ${s.color} opacity-60`} />
+                    {(s as any).video ? (
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        src={(s as any).video}
+                      />
+                    ) : (
+                      <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out" loading="lazy" />
+                    )}
+                    <div className={`absolute inset-0 bg-gradient-to-t ${s.color} opacity-40`} />
                     <div className="absolute top-5 right-5 w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center">
                       <s.icon size={24} className="text-white" />
                     </div>

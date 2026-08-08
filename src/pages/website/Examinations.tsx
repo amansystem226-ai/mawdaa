@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Microscope, Eye, Activity, MessageCircle, User, Phone, Stethoscope, FileText } from 'lucide-react';
+import { CheckCircle2, Microscope, Eye, Activity, MessageCircle, User, Phone, FileText } from 'lucide-react';
 import { sendWhatsApp } from '../../utils/whatsapp';
 import { useForm } from 'react-hook-form';
+import { useApp } from '../../context/AppContext';
 
 const fadeUp: any = {
   hidden: { opacity: 0, y: 28 },
@@ -68,10 +69,22 @@ const examinations = [
 type FormData = { name: string; phone: string; service: string; note: string };
 
 const QuickBooking: React.FC = () => {
+  const { addAppointment } = useApp();
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
-    sendWhatsApp({ name: data.name, phone: data.phone, service: data.service, notes: data.note });
+    addAppointment({
+      patientName: data.name,
+      phone: data.phone,
+      age: 30,
+      department: 'examinations',
+      service: 'قسم الفحوصات والأشعة',
+      preferredDate: new Date().toISOString().split('T')[0],
+      preferredTime: '10:00 AM - 12:00 PM',
+      notes: data.note || ''
+    });
+
+    sendWhatsApp({ name: data.name, phone: data.phone, service: 'قسم الفحوصات والأشعة', notes: data.note });
     reset();
   };
 
@@ -104,20 +117,6 @@ const QuickBooking: React.FC = () => {
             dir="ltr"
             className={`w-full bg-slate-50 text-navy placeholder-slate-400 border ${errors.phone ? 'border-red-500' : 'border-slate-300'} h-[56px] px-5 rounded-[16px] text-base outline-none focus:border-primary focus:bg-white transition-all font-medium text-right`}
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-navy mb-2 flex items-center gap-2">
-            <Stethoscope size={16} className="text-primary" />
-            <span>نوع الفحص المطلوبة *</span>
-          </label>
-          <select
-            {...register('service', { required: true })}
-            className={`w-full bg-slate-50 text-navy border ${errors.service ? 'border-red-500' : 'border-slate-300'} h-[56px] px-5 rounded-[16px] text-base outline-none focus:border-primary focus:bg-white transition-all font-medium cursor-pointer`}
-          >
-            <option value="" className="text-slate-500">اختر نوع الفحص المطلوب</option>
-            {examinations.map((e) => <option key={e.title} value={e.title}>{e.title}</option>)}
-          </select>
         </div>
 
         <div>

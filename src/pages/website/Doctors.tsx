@@ -18,15 +18,15 @@ interface Doctor {
 const doctorsList: Doctor[] = [
   {
     id: 'doc-1',
-    name: 'د. محمد عمار',
-    specialty: 'استشاري طب وجراحة العيون وتصحيح الإبصار',
-    experience: 'أكثر من 15 عاماً من الخبرة في طب وجراحة العيون والعمليات الدقيقة.',
-    bio: 'الدكتور محمد عمار طبيب واستشاري متخصص في جراحات العيون وتصحيح الإبصار، إزالة المياه البيضاء بأحدث تقنيات الموجات فوق الصوتية (الفيكو)، زراعة العدسات، ومتابعة أمراض القرنية والشبكية والجلوكوما.',
+    name: 'الفريق الطبي بمركز مودة',
+    specialty: 'نخبة من استشاريي طب وجراحة العيون بمدينة أشمون - محافظة المنوفية',
+    experience: 'أكثر من 15 عاماً من الخبرة والتميز في طب وجراحة العيون والعمليات الدقيقة.',
+    bio: 'يضم مركز مودة لجراحات العيون بمدينة أشمون - محافظة المنوفية نخبة من أكفأ الاستشاريين المتخصصين في جراحات العيون وتصحيح الإبصار، إزالة المياه البيضاء بأحدث تقنيات الموجات فوق الصوتية (الفيكو)، زراعة العدسات، ومتابعة أمراض القرنية والشبكية والجلوكوما.',
     qualifications: [
-      'استشاري طب وجراحة العيون وجراحات الدقيقة.',
-      'دبلوم وزمالة طب وجراحة العيون وتصحيح الإبصار.',
-      'عضو الجمعية المصرية لجراحي عيون مصر والشرق الأوسط.',
-      'متخصص في عمليات الفيكو وزراعة العدسات وتصحيح الإبصار.'
+      'فريق استشاري متميز حاصل على الزمالات والشهادات الطبية الدولية.',
+      'تجهيزات متكاملة بأحدث أجهزة الفحوصات التشخيصية وغرف العمليات المعقمة.',
+      'خبرة واسعة بمدينة أشمون والمحافظة في جراحات العيون الدقيقة.',
+      'أحدث تقنيات الفيكو وزراعة العدسات وتصحيح الإبصار.'
     ],
     services: [
       'عمليات إزالة المياه البيضاء بالموجات فوق الصوتية (الفيكو) وزرع العدسات.',
@@ -64,18 +64,18 @@ export const Doctors: React.FC = () => {
 
           <div className="flex-1">
             <span className="inline-block bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full mb-3">
-              النخبة الطبية
+              النخبة الطبية بالمركز
             </span>
             <h1 className="text-3xl md:text-4xl font-black text-navy mb-2">{doctor.name}</h1>
             <p className="text-primary font-bold text-base mb-4">{doctor.specialty}</p>
             <p className="text-sm text-muted leading-relaxed mb-6">{doctor.bio}</p>
 
             <button
-              onClick={() => sendWhatsApp({ name: '', phone: '', service: `استشارة د. محمد عمار` })}
+              onClick={() => sendWhatsApp({ name: '', phone: '', service: `استشارة مركز مودة لجراحات العيون` })}
               className="inline-flex items-center gap-2 bg-gradient-brand text-white font-bold px-6 py-3 rounded-2xl shadow-card hover:shadow-card-hover transition-all text-sm cursor-pointer"
             >
               <MessageCircle size={16} />
-              احجز كشف مع د. محمد عمار
+              احجز موعد كشف بمركز مودة
             </button>
           </div>
         </motion.div>

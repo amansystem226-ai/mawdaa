@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Clock, MessageCircle, User, Phone, Stethoscope, FileText } from 'lucide-react';
+import { CheckCircle2, Clock, MessageCircle, User, Phone, FileText } from 'lucide-react';
 import { sendWhatsApp } from '../../utils/whatsapp';
 import { useForm } from 'react-hook-form';
+import { useApp } from '../../context/AppContext';
 
 const fadeUp: any = {
   hidden: { opacity: 0, y: 28 },
@@ -15,7 +16,7 @@ const fadeUp: any = {
 
 const surgeries = [
   {
-    title: 'إزالة المياه البيضاء بالموجات فوق الصوتية (الفيكو)',
+    title: 'إزالة المياه البيضاء بالموجات فوق الصوتية (الفاكو)',
     desc: 'عملية استئصال عدسة العين المعتمة واستبدالها بعدسة صناعية شفافة بتقنية الموجات فوق الصوتية.',
     duration: '20-30 دقيقة',
     recovery: '1-3 أسابيع',
@@ -61,10 +62,22 @@ const surgeries = [
 type FormData = { name: string; phone: string; service: string; note: string };
 
 const QuickBooking: React.FC = () => {
+  const { addAppointment } = useApp();
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
-    sendWhatsApp({ name: data.name, phone: data.phone, service: data.service, notes: data.note });
+    addAppointment({
+      patientName: data.name,
+      phone: data.phone,
+      age: 30,
+      department: 'surgeries',
+      service: 'قسم العمليات الجراحية',
+      preferredDate: new Date().toISOString().split('T')[0],
+      preferredTime: '10:00 AM - 12:00 PM',
+      notes: data.note || ''
+    });
+
+    sendWhatsApp({ name: data.name, phone: data.phone, service: 'قسم العمليات الجراحية', notes: data.note });
     reset();
   };
 
@@ -97,20 +110,6 @@ const QuickBooking: React.FC = () => {
             dir="ltr"
             className={`w-full bg-slate-50 text-navy placeholder-slate-400 border ${errors.phone ? 'border-red-500' : 'border-slate-300'} rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary focus:bg-white transition-all font-medium text-right`}
           />
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold text-navy mb-1.5 flex items-center gap-1.5">
-            <Stethoscope size={14} className="text-primary" />
-            <span>نوع العملية أو الاستشارة *</span>
-          </label>
-          <select
-            {...register('service', { required: true })}
-            className={`w-full bg-slate-50 text-navy border ${errors.service ? 'border-red-500' : 'border-slate-300'} rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary focus:bg-white transition-all font-medium cursor-pointer`}
-          >
-            <option value="" className="text-slate-500">اختر نوع العملية المطلوبة</option>
-            {surgeries.map((s) => <option key={s.title} value={s.title}>{s.title}</option>)}
-          </select>
         </div>
 
         <div>

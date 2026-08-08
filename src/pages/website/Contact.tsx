@@ -40,7 +40,7 @@ export const Contact: React.FC = () => {
                   <MapPin className="text-brand-teal mt-0.5 shrink-0" size={20} />
                   <div>
                     <strong className="block mb-1">عنوان العيادة:</strong>
-                    <span className="text-brand-gray-dark text-xs leading-relaxed">أشمون، المنوفية - شارع سعد زغلول - عمارة المساعي المشكورة - فوق جني سويت</span>
+                    <span className="text-brand-gray-dark text-xs leading-relaxed">مدينة أشمون - محافظة المنوفية - شارع سعد زغلول - عمارة المساعي المشكورة</span>
                   </div>
                 </li>
                 <li className="flex gap-3.5 items-start">
@@ -55,7 +55,7 @@ export const Contact: React.FC = () => {
                   <Clock className="text-brand-teal mt-0.5 shrink-0" size={20} />
                   <div>
                     <strong className="block mb-1">ساعات العمل والكشف:</strong>
-                    <span className="text-brand-gray-dark text-xs leading-relaxed">يومياً من الساعة 2:00 مساءً حتى الساعة 10:00 مساءً (ما عدا يوم الجمعة عطلة رسمية بالكامل).</span>
+                    <span className="text-brand-gray-dark text-xs leading-relaxed">السبت – الخميس من الساعة 9:00 صباحاً حتى 12:00 ظهراً. (الجمعة: مغلق)</span>
                   </div>
                 </li>
                 <li className="flex gap-3.5 items-start">
@@ -85,25 +85,44 @@ export const Contact: React.FC = () => {
           </div>
         </div>
 
-        {/* Map Location placeholder with premium styling */}
+        {/* Map Location card with live video background */}
         <div className="w-full">
-          <h3 className="text-xl font-bold text-brand-blue mb-4 border-r-4 border-brand-teal pr-3">موقع العيادة الجغرافي بأشمون</h3>
-          <Card className="p-0 overflow-hidden border border-brand-gray/40 relative shadow-premium h-96">
-            <div className="absolute inset-0 bg-brand-gray-light flex flex-col items-center justify-center text-center p-6 bg-cover bg-center" style={{ backgroundImage: "url('/assets/office.jpg')" }}>
-              <div className="absolute inset-0 bg-brand-blue-dark/80 backdrop-blur-xs" />
-              <div className="relative z-10 text-white max-w-md">
-                <MapPin className="mx-auto text-brand-teal w-12 h-12 mb-4 animate-bounce" />
-                <h4 className="text-lg font-bold mb-2">فرع أشمون - شارع سعد زغلول</h4>
-                <p className="text-xs text-brand-teal-light/80 leading-relaxed mb-6">
+          <h3 className="text-2xl font-bold text-navy mb-4 border-r-4 border-primary pr-3 font-heading">موقع العيادة الجغرافي بأشمون</h3>
+          <Card className="p-0 overflow-hidden border border-white/20 relative shadow-2xl h-[480px] rounded-[28px]">
+            {/* Live Location Video Background */}
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            >
+              <source src="./assets/location_video.mp4" type="video/mp4" />
+            </video>
+
+            {/* Ambient Dark Vignette Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b2230]/90 via-[#0b2230]/50 to-[#0b2230]/40 pointer-events-none" />
+
+            {/* High-Contrast Glassmorphism Text Card */}
+            <div className="relative z-10 h-full flex flex-col items-center justify-center p-6 sm:p-10">
+              <div className="bg-[#0b2230]/85 backdrop-blur-md p-6 sm:p-8 rounded-[24px] border border-white/20 shadow-2xl text-center max-w-lg w-full">
+                <div className="w-14 h-14 bg-primary/20 border border-primary/40 rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#2dd4bf] shadow-lg">
+                  <MapPin size={28} className="animate-bounce" />
+                </div>
+                <h4 className="text-2xl sm:text-3xl font-extrabold text-white font-heading mb-3 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                  فرع أشمون - شارع سعد زغلول
+                </h4>
+                <p className="text-sm sm:text-base text-white/95 leading-[1.8] font-medium mb-6 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
                   موقع متميز بوسط مدينة أشمون، المنوفية. عمارة المساعي المشكورة الدور الأول فوق جني سويت.
                 </p>
                 <a 
                   href="https://maps.google.com/?q=أشمون+شارع+سعد+زغلول" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center font-bold px-6 py-2.5 bg-brand-teal text-white rounded-xl hover:bg-brand-teal-dark transition-all text-xs"
+                  className="inline-flex items-center justify-center gap-2.5 bg-[#0A7C86] hover:bg-[#075c64] text-white font-bold h-[54px] px-8 rounded-[16px] transition-all text-sm sm:text-base shadow-xl font-heading active:scale-95 border border-white/20"
                 >
-                  فتح الموقع الجغرافي على خرائط Google
+                  <MapPin size={18} />
+                  <span>فتح الموقع الجغرافي على خرائط Google</span>
                 </a>
               </div>
             </div>

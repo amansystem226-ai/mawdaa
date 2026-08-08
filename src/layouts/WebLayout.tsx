@@ -29,7 +29,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             {/* Brand Logo Only */}
             <Link to="/" className="group flex items-center">
               <img
-                src="./assets/logo.jpg"
+                src="./assets/logo.jpg?v=2026"
                 alt="مركز مودة لجراحات العيون"
                 className="w-12 h-12 rounded-full object-cover border border-white/40 shadow-md group-hover:scale-105 transition-transform"
               />
@@ -137,10 +137,10 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             <div className="space-y-4">
               <div>
                 <h3 className="font-heading font-black text-xl text-white tracking-wide mb-1">مركز مودة لجراحات العيون</h3>
-                <p className="text-sm text-[#2dd4bf] font-bold">بأشمون • إشراف د. محمد عمار</p>
+                <p className="text-sm text-[#2dd4bf] font-bold">مدينة أشمون - محافظة المنوفية</p>
               </div>
               <p className="text-sm text-white/75 leading-[1.8] font-light">
-                أول مركز متخصص لطب وجراحة العيون بمدينة أشمون، يقدم رعاية متكاملة بأحدث الأجهزة الطبية المعتمَدة.
+                أول مركز متخصص لطب وجراحة العيون بمدينة أشمون بمحافظة المنوفية، يقدم رعاية متكاملة بأحدث الأجهزة الطبية المعتمَدة.
               </p>
               <p className="text-xs text-white/60 font-semibold pt-1">
                 رؤية أوضح .. حياة أفضل
@@ -153,7 +153,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
               <ul className="space-y-3.5 text-sm text-white/75">
                 {[
                   { title: 'الفحوصات والأشعة (Pentacam & OCT)', path: '/examinations' },
-                  { title: 'عمليات المياه البيضاء بالفيكو', path: '/surgeries' },
+                  { title: 'عمليات المياه البيضاء بالفاكو', path: '/surgeries' },
                   { title: 'تصحيح الإبصار وزراعة العدسات', path: '/surgeries' },
                   { title: 'عيادات كشف النظر والعدسات', path: '/clinics' },
                 ].map((s, i) => (
@@ -174,9 +174,8 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
               <h4 className="font-bold text-white mb-6 text-base font-heading border-r-2 border-[#0A7C86] pr-3">مواعيد العمل بالعيادة</h4>
               <div className="space-y-3 text-xs text-white/75 leading-[1.8]">
                 <p className="font-bold text-white text-sm mb-1">السبت – الخميس</p>
-                <p>الفترة الصباحية: 9:00 صباحاً – 1:00 ظهراً</p>
-                <p>الفترة المسائية: 5:00 مساءً – 10:00 مساءً</p>
-                <p className="text-white/50 pt-2 border-t border-white/10 mt-2">الجمعة: العيادة مغلقة (استقبال طوارئ)</p>
+                <p>من الساعة 9:00 صباحاً حتى 12:00 ظهراً</p>
+                <p className="text-white/50 pt-2 border-t border-white/10 mt-2">الجمعة: مغلق</p>
               </div>
             </div>
 
@@ -205,7 +204,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
                   </a>
                 </li>
                 <li className="text-xs text-white/60 leading-[1.8] pt-1">
-                  أشمون - شارع سعد زغلول - عمارة المساعي المشكورة - فوق جني سويت
+                  مدينة أشمون - محافظة المنوفية - شارع سعد زغلول - عمارة المساعي المشكورة
                 </li>
               </ul>
             </div>
@@ -214,7 +213,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
           {/* Footer Bottom Bar */}
           <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-white/60">
-            <p>© {new Date().getFullYear()} - مركز مودة لجراحات العيون (د. محمد عمار). جميع الحقوق محفوظة.</p>
+            <p>© {new Date().getFullYear()} - مركز مودة لجراحات العيون بمدينة أشمون - محافظة المنوفية. جميع الحقوق محفوظة.</p>
             
             <div className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-full border border-white/10 transition-all">
               <span>Powered by <strong className="text-white font-semibold">Mazen Abdelgfar</strong></span>

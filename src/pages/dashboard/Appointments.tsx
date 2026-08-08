@@ -116,8 +116,6 @@ export const Appointments: React.FC = () => {
                       <div className="font-bold text-brand-blue text-sm">{appt.patientName}</div>
                       <div className="text-[10px] text-brand-gray-dark mt-0.5 flex gap-2">
                         <span className="font-sans">{appt.phone}</span>
-                        <span>•</span>
-                        <span>العمر: {appt.age} سنة</span>
                       </div>
                     </td>
 

@@ -31,25 +31,63 @@ export const Overview: React.FC = () => {
     { title: 'المواعيد المؤكدة', value: confirmedBookings, label: 'إجمالي المواعيد التي تم تأكيدها', icon: CheckCircle, color: 'text-green-600 bg-green-50' },
   ];
 
-  // Chart 1: Monthly appointments data simulation
-  const monthlyData = [
-    { name: 'فبراير', appointments: 15, patients: 12 },
-    { name: 'مارس', appointments: 28, patients: 20 },
-    { name: 'أبريل', appointments: 35, patients: 24 },
-    { name: 'مايو', appointments: 48, patients: 32 },
-    { name: 'يونيو', appointments: 60, patients: 40 },
-    { name: 'يوليو', appointments: appointments.length * 4, patients: patients.length * 3 }, // dynamic scaling
-  ];
+  // Chart 1: Build monthly data from REAL appointments
+  const getMonthlyData = () => {
+    const months: Record<string, { appointments: number; patients: Set<string> }> = {};
+    const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    // Initialize last 6 months
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      months[key] = { appointments: 0, patients: new Set() };
+    }
 
-  // Chart 2: Service popularity simulation
-  const servicePopularity = [
-    { name: 'المياه البيضاء', value: appointments.filter(a => a.service.includes('المياه البيضاء')).length + 12 },
-    { name: 'البنتاكام والأشعة', value: appointments.filter(a => a.department === 'examinations').length + 8 },
-    { name: 'الليزك وتصحيح النظر', value: appointments.filter(a => a.service.includes('الليزك')).length + 5 },
-    { name: 'عيادة كشف عيون', value: appointments.filter(a => a.service.includes('كشف عيون')).length + 15 },
-  ];
+    appointments.forEach(a => {
+      const dateStr = a.preferredDate || a.createdAt;
+      if (dateStr) {
+        const monthKey = dateStr.substring(0, 7); // YYYY-MM
+        if (months[monthKey]) {
+          months[monthKey].appointments++;
+          months[monthKey].patients.add(a.phone);
+        }
+      }
+    });
 
-  const COLORS = ['#003366', '#008080', '#e28743', '#76b5c5'];
+    return Object.entries(months).map(([key, val]) => {
+      const month = key.split('-')[1];
+      return {
+        name: monthNames[parseInt(month) - 1],
+        appointments: val.appointments,
+        patients: val.patients.size
+      };
+    });
+  };
+
+  const monthlyData = getMonthlyData();
+  const totalMonthlyAppts = monthlyData.reduce((sum, m) => sum + m.appointments, 0);
+
+  // Chart 2: Real service popularity from actual appointments
+  const getServicePopularity = () => {
+    const services: Record<string, number> = {};
+    appointments.forEach(a => {
+      const dept = a.department === 'examinations' ? 'الفحوصات والأشعة' 
+                 : a.department === 'surgeries' ? 'العمليات الجراحية'
+                 : 'العيادات والكشوفات';
+      services[dept] = (services[dept] || 0) + 1;
+    });
+
+    // Always show all 3 departments even if zero
+    return [
+      { name: 'الفحوصات والأشعة', value: services['الفحوصات والأشعة'] || 0 },
+      { name: 'العمليات الجراحية', value: services['العمليات الجراحية'] || 0 },
+      { name: 'العيادات والكشوفات', value: services['العيادات والكشوفات'] || 0 },
+    ];
+  };
+
+  const servicePopularity = getServicePopularity();
+  const COLORS = ['#003366', '#008080', '#e28743'];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
@@ -89,73 +127,88 @@ export const Overview: React.FC = () => {
         {/* Monthly appointments trend */}
         <Card className="lg:col-span-2 border border-brand-gray/30 p-6 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-sm font-bold text-brand-blue">معدلات المواعيد وزيادة المرضى الشهرية</h3>
+            <h3 className="text-sm font-bold text-brand-blue">معدلات المواعيد والمرضى الشهرية</h3>
             <span className="text-[10px] font-bold text-brand-teal flex items-center gap-1">
               <TrendingUp size={14} />
-              نمو مطرد في يوليو
+              إجمالي {totalMonthlyAppts} موعد
             </span>
           </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorAppts" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#003366" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#003366" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorPats" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#008080" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#008080" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e7eb" />
-                <XAxis dataKey="name" stroke="#a0aec0" fontSize={11} tickLine={false} />
-                <YAxis stroke="#a0aec0" fontSize={11} tickLine={false} />
-                <Tooltip />
-                <Area type="monotone" dataKey="appointments" stroke="#003366" strokeWidth={2} fillOpacity={1} fill="url(#colorAppts)" name="المواعيد" />
-                <Area type="monotone" dataKey="patients" stroke="#008080" strokeWidth={2} fillOpacity={1} fill="url(#colorPats)" name="المرضى الجدد" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          {totalMonthlyAppts === 0 ? (
+            <div className="h-64 flex items-center justify-center text-brand-gray-dark text-xs">
+              لا توجد بيانات حجوزات بعد. ستظهر الإحصائيات عند بدء استقبال طلبات المرضى.
+            </div>
+          ) : (
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={monthlyData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorAppts" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#003366" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#003366" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorPats" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#008080" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#008080" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e7eb" />
+                  <XAxis dataKey="name" stroke="#a0aec0" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#a0aec0" fontSize={11} tickLine={false} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="appointments" stroke="#003366" strokeWidth={2} fillOpacity={1} fill="url(#colorAppts)" name="المواعيد" />
+                  <Area type="monotone" dataKey="patients" stroke="#008080" strokeWidth={2} fillOpacity={1} fill="url(#colorPats)" name="المرضى الجدد" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </Card>
 
         {/* Popularity Circle Chart */}
         <Card className="border border-brand-gray/30 p-6 flex flex-col justify-between">
-          <h3 className="text-sm font-bold text-brand-blue mb-4">شعبية وتوزيع الخدمات الطبية</h3>
-          <div className="h-56 w-full relative flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={servicePopularity}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {servicePopularity.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="absolute flex flex-col items-center">
-              <span className="text-[10px] font-bold text-brand-gray-dark">إجمالي العمليات</span>
-              <span className="text-2xl font-extrabold text-brand-blue font-sans">
-                {servicePopularity.reduce((a, b) => a + b.value, 0)}
-              </span>
+          <h3 className="text-sm font-bold text-brand-blue mb-4">توزيع الخدمات حسب القسم</h3>
+          {appointments.length === 0 ? (
+            <div className="h-56 flex items-center justify-center text-brand-gray-dark text-xs">
+              لا توجد بيانات بعد
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mt-4 text-[10px] text-brand-navy">
-            {servicePopularity.map((entry, idx) => (
-              <div key={idx} className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[idx] }} />
-                <span className="truncate">{entry.name}</span>
+          ) : (
+            <>
+              <div className="h-56 w-full relative flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={servicePopularity}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {servicePopularity.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute flex flex-col items-center">
+                  <span className="text-[10px] font-bold text-brand-gray-dark">إجمالي الطلبات</span>
+                  <span className="text-2xl font-extrabold text-brand-blue font-sans">
+                    {appointments.length}
+                  </span>
+                </div>
               </div>
-            ))}
-          </div>
+              <div className="grid grid-cols-1 gap-2 mt-4 text-[10px] text-brand-navy">
+                {servicePopularity.map((entry, idx) => (
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[idx] }} />
+                    <span className="truncate">{entry.name}</span>
+                    <span className="font-bold font-sans mr-auto">{entry.value}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </Card>
       </div>
 

@@ -31,8 +31,8 @@ export default {
         subtle: '#64748B',
       },
       fontFamily: {
-        sans: ['Readex Pro', 'Tajawal', 'sans-serif'],
-        heading: ['Readex Pro', 'Tajawal', 'sans-serif'],
+        sans: ['Cairo', 'sans-serif'],
+        heading: ['Cairo', 'sans-serif'],
       },
       borderRadius: {
         xl: '0.75rem',  // 12px
