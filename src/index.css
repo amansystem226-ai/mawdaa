@@ -118,3 +118,32 @@
     background: linear-gradient(135deg, #0A7C86 0%, #1B5E8C 100%);
   }
 }
+
+/* Magic UI Keyframe Animations */
+@keyframes shiny-text {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.animate-shiny-text {
+  animation: shiny-text 6s infinite linear;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0%); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes marquee-reverse {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0%); }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 35s linear infinite;
+}

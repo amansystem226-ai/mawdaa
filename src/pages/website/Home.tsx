@@ -10,6 +10,9 @@ import {
 import { useForm } from 'react-hook-form';
 import { sendWhatsApp } from '../../utils/whatsapp';
 import { useApp } from '../../context/AppContext';
+import { NumberTicker } from '../../components/magicui/NumberTicker';
+import { ShinyText } from '../../components/magicui/ShinyText';
+import { Marquee } from '../../components/magicui/Marquee';
 
 // --- Smooth Calm Typewriter Component ---
 const TypewriterTitle: React.FC = () => {
@@ -75,33 +78,6 @@ const cardChildVariant: any = {
     scale: 1,
     transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] }
   }
-};
-
-// --- Counter Component ---
-const Counter: React.FC<{ target: number; suffix?: string; prefix?: string }> = ({ target, suffix = '', prefix = '' }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started.current) {
-        started.current = true;
-        let current = 0;
-        const step = target / 60;
-        const timer = setInterval(() => {
-          current = Math.min(current + step, target);
-          el.textContent = prefix + Math.floor(current).toLocaleString('ar') + suffix;
-          if (current >= target) clearInterval(timer);
-        }, 25);
-      }
-    }, { threshold: 0.5 });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target, suffix, prefix]);
-
-  return <span ref={ref}>{prefix}0{suffix}</span>;
 };
 
 // --- Services Cards (32px Padding, 32px Gaps) ---
@@ -386,9 +362,9 @@ export const Home: React.FC = () => {
               {/* Location Subtitle Glass Pill */}
               <div className="mt-[18px] mb-[24px]">
                 <div className="w-fit whitespace-nowrap rounded-[999px] px-[22px] py-[10px] bg-[rgba(30,200,232,0.08)] border border-[rgba(30,200,232,0.18)] backdrop-blur-[10px] inline-flex items-center justify-center">
-                  <span className="font-heading font-bold text-[16px] sm:text-[18px] lg:text-[22px] leading-[1.2] tracking-[-0.3px] whitespace-nowrap bg-gradient-to-l from-[#1EC8E8] via-[#67e8f9] to-[#1EC8E8] bg-clip-text text-transparent [text-shadow:_0_0_12px_rgba(30,200,232,0.3)]">
+                  <ShinyText className="font-heading font-bold text-[16px] sm:text-[18px] lg:text-[22px] leading-[1.2]">
                     بمدينة أشمون • محافظة المنوفية
-                  </span>
+                  </ShinyText>
                 </div>
               </div>
 
@@ -472,26 +448,45 @@ export const Home: React.FC = () => {
 
           </div>
 
-          {/* Stats Bar Cards */}
+          {/* Stats Bar Cards with Magic UI NumberTicker */}
           <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             {[
-              { n: 15, suf: '+', label: 'سنة خبرة' },
-              { n: 10000, suf: '+', label: 'عملية ناجحة' },
-              { n: 98, suf: '%', label: 'نسبة رضا المرضى' },
+              { n: 15, suf: '+', label: 'سنة خبرة وتخصص بأشمون' },
+              { n: 10000, suf: '+', label: 'عملية وفحص ناجح' },
+              { n: 98, suf: '%', label: 'نسبة رضا واستحسان المرضى' },
             ].map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-white/10 backdrop-blur-md rounded-[20px] p-6 border border-white/15 text-center hover:bg-white/15 transition-cinematic hover:-translate-y-1"
+                className="bg-white/10 backdrop-blur-md rounded-[20px] p-6 border border-white/15 text-center hover:bg-white/15 transition-cinematic hover:-translate-y-1 shadow-lg"
               >
-                <p className="text-3xl sm:text-4xl font-bold text-white">
-                  <Counter target={s.n} suffix={s.suf} />
+                <p className="text-3xl sm:text-4xl font-extrabold text-[#2dd4bf] font-heading flex items-center justify-center gap-1" dir="ltr">
+                  <span>{s.suf}</span>
+                  <NumberTicker value={s.n} delay={i * 0.2} />
                 </p>
-                <p className="text-white/85 text-sm sm:text-base mt-2 font-medium">{s.label}</p>
+                <p className="text-white/95 text-sm sm:text-base mt-2 font-bold font-heading">{s.label}</p>
               </motion.div>
             ))}
+          </div>
+
+          {/* Magic UI Technology Marquee */}
+          <div className="mt-10 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 py-3 overflow-hidden text-white/90">
+            <Marquee pauseOnHover>
+              {[
+                '✨ أحدث جهاز أوركام Pentacam لإنتظام القرنية',
+                '🔬 أشعة مقطعية للشبكية والعصب البصري OCT',
+                '👁️ جراحات الفاكو للمياه البيضاء بدون غرز',
+                '💎 عدسات الفاكو الأمريكية وسويس كير المعتمدة',
+                '🏥 عيادات كشف النظر والعدسات اللاصقة بأشمون',
+                '⚡ تقنية الفيمتو ليزك وتصحيح عيوب الإبصار',
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2 px-5 py-2 rounded-xl bg-white/10 border border-white/15 whitespace-nowrap text-xs sm:text-sm font-bold font-heading text-[#2dd4bf]">
+                  <span>{item}</span>
+                </div>
+              ))}
+            </Marquee>
           </div>
         </div>
 
@@ -579,6 +574,11 @@ export const Home: React.FC = () => {
                     <div className="w-11 h-11 rounded-2xl bg-gradient-brand flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-card">
                       <f.icon size={20} className="text-white" />
                     </div>
+                    {/* Main Headline */}
+                    <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-black text-white font-heading leading-[1.25] tracking-tight drop-shadow-md">
+                      رعايتكم بين أيدٍ أمينة .. <br />
+                      <ShinyText>رؤية أوضح لحياة أفضل</ShinyText>
+                    </h1>
                     <div>
                       <h3 className="font-bold text-navy text-base font-heading mb-1">{f.title}</h3>
                       <p className="text-xs text-muted leading-[1.7]">{f.desc}</p>
