@@ -21,37 +21,41 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   return (
     <div className="flex flex-col min-h-screen bg-bg text-navy font-sans antialiased">
 
-      {/* --- NAVBAR: Clean, Spacious, Ultra-Transparent & Uncluttered --- */}
-      <header className="absolute top-0 inset-x-0 z-50 h-[88px] flex items-center bg-transparent border-b border-white/10">
+      {/* --- NAVBAR: Sleek Sticky Dark Medical Header --- */}
+      <header className="sticky top-0 inset-x-0 z-50 h-[84px] flex items-center bg-[#0b2230]/95 backdrop-blur-md border-b border-white/15 shadow-xl transition-all">
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
           <div className="flex items-center justify-between">
 
-            {/* Brand Logo Only */}
-            <Link to="/" className="group flex items-center">
+            {/* Brand Logo & Name */}
+            <Link to="/" className="group flex items-center gap-3">
               <img
                 src="./assets/logo.jpg?v=2026"
                 alt="مركز مودة لجراحات العيون"
-                className="w-12 h-12 rounded-full object-cover border border-white/40 shadow-md group-hover:scale-105 transition-transform"
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#2dd4bf]/40 shadow-md group-hover:scale-105 transition-transform"
               />
+              <div className="hidden sm:block text-right">
+                <span className="font-heading font-extrabold text-base text-white block leading-tight">مركز مودة لجراحات العيون</span>
+                <span className="text-[11px] text-[#2dd4bf] font-bold block">أشمون - المنوفية</span>
+              </div>
             </Link>
 
-            {/* Nav Menu Links - 40px Spacing, Concise Titles */}
-            <nav className="hidden lg:flex items-center gap-10">
+            {/* Nav Menu Links - High Contrast & Crisp Glowing Active Bar */}
+            <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map((link, idx) => {
                 const isActive = location.pathname === link.path;
                 return (
                   <Link
                     key={idx}
                     to={link.path}
-                    className={`text-base font-semibold transition-colors duration-200 relative py-1 ${
+                    className={`text-base font-bold transition-all duration-200 relative py-1.5 px-1 ${
                       isActive
-                        ? 'text-[#2dd4bf] font-bold'
+                        ? 'text-[#2dd4bf] font-extrabold'
                         : 'text-white/90 hover:text-white'
                     }`}
                   >
                     {link.title}
                     {isActive && (
-                      <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#2dd4bf] rounded-full" />
+                      <span className="absolute bottom-0 inset-x-0 h-1 bg-[#2dd4bf] rounded-full shadow-[0_0_10px_#2dd4bf]" />
                     )}
                   </Link>
                 );
@@ -72,7 +76,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
               {/* Book Appointment CTA Button */}
               <Link
                 to="/contact#booking"
-                className="hidden sm:inline-flex items-center justify-center gap-2 bg-[#0A7C86] hover:bg-[#075c64] text-white h-11 px-6 rounded-xl text-sm font-bold shadow-md transition-all duration-300 font-heading cursor-pointer active:scale-95"
+                className="hidden sm:inline-flex items-center justify-center gap-2 bg-[#0A7C86] hover:bg-[#075c64] text-white h-11 px-6 rounded-xl text-sm font-bold shadow-lg transition-all duration-300 font-heading cursor-pointer active:scale-95 border border-teal-400/30"
               >
                 <Calendar size={16} />
                 <span>احجز موعدك</span>
@@ -81,7 +85,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
               {/* Mobile Menu Toggle Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2.5 rounded-xl bg-black/25 hover:bg-black/40 text-white transition-all cursor-pointer border border-white/20"
+                className="lg:hidden p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer border border-white/20"
                 aria-label="القائمة"
               >
                 {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -93,8 +97,8 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-[90px] inset-x-0 bg-[#0b2230]/98 backdrop-blur-xl px-6 pt-6 pb-8 text-right border-b border-white/15 shadow-2xl">
-            <nav className="flex flex-col space-y-4 mb-6">
+          <div className="lg:hidden absolute top-[84px] inset-x-0 bg-[#0b2230]/98 backdrop-blur-xl px-6 pt-6 pb-8 text-right border-b border-white/15 shadow-2xl">
+            <nav className="flex flex-col space-y-3 mb-6">
               {navLinks.map((link, idx) => {
                 const isActive = location.pathname === link.path;
                 return (
@@ -103,7 +107,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
                     to={link.path}
                     className={`text-base font-bold px-4 py-3 rounded-2xl transition-all ${
                       isActive
-                        ? 'bg-white/15 text-[#2dd4bf]'
+                        ? 'bg-[#0A7C86] text-white shadow-md'
                         : 'text-white/90 hover:bg-white/10'
                     }`}
                   >
@@ -115,7 +119,7 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             <div className="pt-4 border-t border-white/10">
               <Link
                 to="/contact#booking"
-                className="w-full inline-flex items-center justify-center gap-2 bg-[#0A7C86] hover:bg-[#075c64] text-white h-[56px] px-8 rounded-[16px] text-base font-bold shadow-md font-heading"
+                className="w-full inline-flex items-center justify-center gap-2 bg-[#0A7C86] hover:bg-[#075c64] text-white h-[52px] px-8 rounded-2xl text-base font-bold shadow-md font-heading"
               >
                 <Calendar size={20} />
                 <span>احجز موعدك الآن</span>
