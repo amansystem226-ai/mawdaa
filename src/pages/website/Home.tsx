@@ -360,9 +360,10 @@ export const Home: React.FC = () => {
           muted
           loop
           playsInline
+          preload="metadata"
           className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-35 sm:opacity-45 blur-[1px] transition-opacity duration-500"
         >
-          <source src="./assets/IMG_9867.mp4" type="video/mp4" />
+          <source src="./assets/hero-video.mp4" type="video/mp4" />
         </video>
 
         {/* Ambient Gradient Vignette */}
@@ -441,10 +442,12 @@ export const Home: React.FC = () => {
                   ref={videoRef}
                   autoPlay
                   muted={isMuted}
+                  loop
                   playsInline
+                  preload="metadata"
                   className="w-full h-[450px] sm:h-[520px] lg:h-[560px] object-cover object-center rounded-[28px]"
                 >
-                  <source src="./assets/IMG_9867.mp4" type="video/mp4" />
+                  <source src="./assets/hero-video.mp4" type="video/mp4" />
                 </video>
 
                 {/* Floating Sound Toggle Badge */}

@@ -97,6 +97,7 @@ export const Contact: React.FC = () => {
               muted
               loop
               playsInline
+              preload="metadata"
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             >
               <source src="./assets/location_video.mp4" type="video/mp4" />
