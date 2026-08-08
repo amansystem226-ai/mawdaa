@@ -125,15 +125,6 @@ export const WebLayout: React.FC<{ children: React.ReactNode }> = ({ children })
         )}
       </header>
 
-      {/* --- MOBILE PROMINENT LOCATION STRIP --- */}
-      <div className="bg-[#054348] border-b border-teal-500/30 py-2.5 px-4 text-center text-xs font-bold text-white shadow-md flex items-center justify-center gap-2 z-40 mt-[88px]">
-        <span className="w-2 h-2 rounded-full bg-[#2dd4bf] animate-ping shrink-0" />
-        <span className="text-[#2dd4bf] font-extrabold">العنوان:</span>
-        <span className="leading-tight text-white font-heading">
-          مدينة أشمون - محافظة المنوفية - شارع سعد زغلول (عمارة المساعي المشكورة)
-        </span>
-      </div>
-
       {/* Main Content Area */}
       <main className="flex-1">{children}</main>
 
