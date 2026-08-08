@@ -340,7 +340,6 @@ export const Home: React.FC = () => {
           className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-35 sm:opacity-45 blur-[1px] transition-opacity duration-500"
         >
           <source src="./assets/hero-video.mp4" type="video/mp4" />
-          <source src="./assets/hero-video.mov" type="video/quicktime" />
         </video>
 
         {/* Ambient Gradient Vignette */}
@@ -425,7 +424,6 @@ export const Home: React.FC = () => {
                   className="w-full h-[450px] sm:h-[520px] lg:h-[560px] object-cover object-center rounded-[28px]"
                 >
                   <source src="./assets/hero-video.mp4" type="video/mp4" />
-                  <source src="./assets/hero-video.mov" type="video/quicktime" />
                 </video>
 
                 {/* Floating Sound Toggle Badge */}
