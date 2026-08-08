@@ -37,10 +37,12 @@ export const Contact: React.FC = () => {
               
               <ul className="space-y-6 text-sm text-brand-navy">
                 <li className="flex gap-3.5 items-start">
-                  <MapPin className="text-brand-teal mt-0.5 shrink-0" size={20} />
-                  <div>
-                    <strong className="block mb-1">عنوان العيادة:</strong>
-                    <span className="text-brand-gray-dark text-xs leading-relaxed">مدينة أشمون - محافظة المنوفية - شارع سعد زغلول - عمارة المساعي المشكورة</span>
+                  <MapPin className="text-[#0A7C86] mt-0.5 shrink-0" size={22} />
+                  <div className="w-full">
+                    <strong className="block mb-1.5 text-navy font-bold text-sm">عنوان العيادة:</strong>
+                    <div className="bg-[#0A7C86]/10 border border-[#0A7C86]/30 p-3 rounded-2xl text-navy text-xs font-bold font-heading leading-relaxed shadow-sm">
+                      📍 مدينة أشمون - محافظة المنوفية - شارع سعد زغلول - عمارة المساعي المشكورة
+                    </div>
                   </div>
                 </li>
                 <li className="flex gap-3.5 items-start">
